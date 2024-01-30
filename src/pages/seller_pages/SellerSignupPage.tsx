@@ -1,7 +1,7 @@
-import SellerSignupCard from "../components/SellerSignupCard";
+import SellerSignupCard from "../../components/seller_components/SellerSignupCard";
 import "./css/SellerSignupPage.css";
-import smallscaleImage from "../assets/smallscale.jpg";
-import InitialNavBar from "../components/InitialNavBar";
+import smallscaleImage from "../../assets/smallscale.jpg";
+import InitialNavBar from "../../components/InitialNavBar";
 
 const SellerSignupPage = () => {
   return (

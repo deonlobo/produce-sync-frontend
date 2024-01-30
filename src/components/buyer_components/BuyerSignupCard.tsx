@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import InputComponent from "./InputComponent";
+import InputComponent from "../InputComponent";
 import Cookies from "js-cookie";
 
 interface Address {
@@ -87,7 +87,7 @@ const SellerSignupCard = () => {
       validateVal();
 
       const response = await fetch(
-        "http://localhost:8080/api/v1/auth/seller/create",
+        "http://localhost:8080/api/v1/auth/buyer/create",
         {
           method: "POST", // Change the method to POST
           headers: {
@@ -107,6 +107,7 @@ const SellerSignupCard = () => {
         // Log the value of the authToken cookie
         const authTokenValue = Cookies.get("authToken");
         console.log("Value of authToken cookie:", authTokenValue);
+        window.location.href = "/buyer/home";
       } else {
         console.log(
           "Failed authentication of the user" + JSON.stringify(user, null, 2)
@@ -145,16 +146,6 @@ const SellerSignupCard = () => {
             name={"lastName"}
             className={`form-control ${
               emptyField === "lastName" ? "is-invalid" : ""
-            }`}
-          />
-          <InputComponent
-            placeholder={"Gender"}
-            value={user.gender || ""}
-            onSelectItem={handleInputChange}
-            type="text"
-            name={"gender"}
-            className={`form-control ${
-              emptyField === "gender" ? "is-invalid" : ""
             }`}
           />
           <div className="input-group mb-3">
@@ -253,9 +244,6 @@ const SellerSignupCard = () => {
             Signup
           </button>
         </div>
-      </div>
-      <div>
-        <pre>{JSON.stringify(user, null, 2)}</pre>
       </div>
     </>
   );

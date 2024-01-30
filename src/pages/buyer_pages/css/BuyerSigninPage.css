@@ -1,0 +1,31 @@
+.buyer-signin-page-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-container-buyer-signin-1 {
+  position: relative;
+}
+
+.buyer-signin-fade-image {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  filter: brightness(80%); /* Adjust the brightness as needed */
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.card-container-buyer-signin-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5em;
+}
+
+.text-css-buyer{
+  color:white; 
+  margin-bottom: 1em;
+}

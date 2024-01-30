@@ -2,5 +2,8 @@
     display: flex;
     justify-content: center;
     gap: 16px; /* Adjust the gap as needed */
-    margin-top: 10em
+    padding-top: 5em;
   }
+.bg-color{
+  background-color: #B2D1D1;
+}

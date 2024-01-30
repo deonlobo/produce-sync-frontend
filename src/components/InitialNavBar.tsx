@@ -4,7 +4,7 @@ import icon from "../assets/icon1.png";
 const InitialNavBar = () => {
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-sm bg-body-tertiary">
         <div className="container-fluid">
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
@@ -27,6 +27,11 @@ const InitialNavBar = () => {
               <li className="nav-item">
                 <Link className="nav-link active" to="/seller/signin">
                   Seller
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link active" to="/buyer/signin">
+                  Buyer
                 </Link>
               </li>
             </ul>

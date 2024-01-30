@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
 import { useState } from "react";
+import Cookies from "universal-cookie";
 
 interface prop {
   image: string;
   api: string;
   signupLink: string;
+  redirectHome: string;
 }
 
-const SigninCard = ({ image, api, signupLink }: prop) => {
+const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [emptyField, setEmptyField] = useState<string | null>(null);
@@ -41,14 +42,21 @@ const SigninCard = ({ image, api, signupLink }: prop) => {
 
       if (response.ok) {
         const data = await response.json();
-
-        // Store the authentication token in a secure cookie
-        Cookies.set("authToken", data.token, { secure: true, httpOnly: true });
+        console.log("data" + data.token);
+        // Store the authentication token using universal-cookie
+        const cookies = new Cookies();
+        cookies.set("authToken", data.token, {
+          secure: true,
+          httpOnly: false,
+          sameSite: "none",
+        });
         console.log("Success authentication of the user");
+
         // Redirect or update state based on successful authentication
-        // Log the value of the authToken cookie
-        const authTokenValue = Cookies.get("authToken");
+        const authTokenValue = cookies.get("authToken");
         console.log("Value of authToken cookie:", authTokenValue);
+
+        window.location.href = redirectHome;
       } else {
         console.log("Failed authentication of the user" + username + password);
         // Handle authentication failure
