@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Cookies from "universal-cookie";
 
@@ -13,6 +13,7 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [emptyField, setEmptyField] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const validateVal = () => {
     if (!username) {
@@ -49,6 +50,7 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
           secure: true,
           httpOnly: false,
           sameSite: "none",
+          path: "/",
         });
         console.log("Success authentication of the user");
 
@@ -56,7 +58,7 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
         const authTokenValue = cookies.get("authToken");
         console.log("Value of authToken cookie:", authTokenValue);
 
-        window.location.href = redirectHome;
+        navigate(redirectHome);
       } else {
         console.log("Failed authentication of the user" + username + password);
         // Handle authentication failure

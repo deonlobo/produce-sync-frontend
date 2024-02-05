@@ -9,6 +9,7 @@ import SellerHomePage from "./pages/seller_pages/SellerHomePage";
 import BuyerSigninPage from "./pages/buyer_pages/BuyerSigninPage";
 import BuyerSignupPage from "./pages/buyer_pages/BuyerSignupPage";
 import BuyerHomePage from "./pages/buyer_pages/BuyerHomePage";
+import SellerAddProductPage from "./pages/seller_pages/SellerAddProductPage";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "/buyer/home",
     element: <BuyerHomePage />,
+  },
+  {
+    path: "/seller/newproduct",
+    element: <SellerAddProductPage />,
   },
 ]);
 

@@ -101,7 +101,12 @@ const SellerSignupCard = () => {
         const data = await response.json();
 
         // Store the authentication token in a secure cookie
-        Cookies.set("authToken", data.token, { secure: true, httpOnly: true });
+        Cookies.set("authToken", data.token, {
+          secure: true,
+          httpOnly: false,
+          sameSite: "none",
+          path: "/",
+        });
         console.log("Success authentication of the user");
         // Redirect or update state based on successful authentication
         // Log the value of the authToken cookie
