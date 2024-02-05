@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import InputComponent from "../InputComponent";
+import { useNavigate } from "react-router-dom";
 
 interface ProductDocument {
   productName?: string;
@@ -13,6 +14,7 @@ interface ProductDocument {
 const SellerAddProductCard = () => {
   const [product, setProduct] = useState<ProductDocument>({});
   const [emptyField, setEmptyField] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -62,6 +64,7 @@ const SellerAddProductCard = () => {
         const data = await response.json();
 
         console.log("Successfully added the product");
+        navigate("/seller/home");
       } else {
         console.log(
           "Failed to add product of the user" + JSON.stringify(product, null, 2)
