@@ -14,6 +14,8 @@ interface ProductDocument {
 const SellerAddProductCard = () => {
   const [product, setProduct] = useState<ProductDocument>({});
   const [emptyField, setEmptyField] = useState<string | null>(null);
+  //Upload the files from the ui
+  const [files, setFiles] = useState<File[]>([]);
   const navigate = useNavigate();
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -21,32 +23,78 @@ const SellerAddProductCard = () => {
     setProduct((prevProd) => ({ ...prevProd, [name]: value }));
   };
 
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+    if (fileList) {
+      setFiles(Array.from(fileList));
+    }
+  };
+
   const validateVal = () => {
     if (!product.productName) {
       setEmptyField("productName");
-      return;
+      return false;
     }
     if (!product.productDescription) {
       setEmptyField("productDescription");
-      return;
+      return false;
     }
-
+    if (!product.productImages) {
+      setEmptyField("productImages");
+      return false;
+    }
     if (!product.quantity) {
       setEmptyField("quantity");
-      return;
+      return false;
     }
     if (!product.perUnitPrice) {
       setEmptyField("perUnitPrice");
-      return;
+      return false;
     }
     if (!product.unit) {
       setEmptyField("unit");
-      return;
+      return false;
+    }
+
+    // All validations passed
+    return true;
+  };
+
+  const handleAddImage = async () => {
+    try {
+      const formData = new FormData();
+      //formData.append("files", files); // Add files to the FormData
+      // Append each file individually
+      // Append all files to a single field named "files"
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
+
+      const response = await fetch("http://localhost:8080/seller/upload", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setProduct((prevProd) => ({ ...prevProd, productImages: data }));
+        console.log("Successfully added the Image");
+      } else {
+        console.log("Failed to upload Image");
+        // Handle failure
+      }
+    } catch (error) {
+      console.error("Error during uploading image : ", error);
     }
   };
+
   const handleAddProduct = async () => {
     try {
-      validateVal();
+      if (!validateVal()) {
+        return;
+      }
 
       const response = await fetch(
         "http://localhost:8080/seller/product/create",
@@ -103,6 +151,24 @@ const SellerAddProductCard = () => {
               emptyField === "productDescription" ? "is-invalid" : ""
             }`}
           />
+          <div className="input-group mb-3">
+            <input
+              type="file"
+              name="files"
+              onChange={handleFileChange}
+              multiple
+              className={`form-control ${
+                emptyField === "productImages" ? "is-invalid" : ""
+              }`}
+            />
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => handleAddImage()}
+            >
+              Upload files
+            </button>
+          </div>
           {/* <InputComponent
             placeholder={"Address Line 1"}
             value={product.productImages || ""}

@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import InputComponent from "../InputComponent";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 interface Address {
   addressLine1?: string;
@@ -22,6 +23,7 @@ interface UserDocument {
 const SellerSignupCard = () => {
   const [user, setUser] = useState<UserDocument>({});
   const [emptyField, setEmptyField] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -112,7 +114,7 @@ const SellerSignupCard = () => {
         // Log the value of the authToken cookie
         const authTokenValue = Cookies.get("authToken");
         console.log("Value of authToken cookie:", authTokenValue);
-        window.location.href = "/buyer/home";
+        navigate("/buyer/home");
       } else {
         console.log(
           "Failed authentication of the user" + JSON.stringify(user, null, 2)

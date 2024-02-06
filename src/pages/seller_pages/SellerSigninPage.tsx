@@ -16,9 +16,10 @@ const SellerSigninPage = () => {
             alt="..."
           />
           <div className="card-container-signin-2">
+            <h1 className="text-css-buyer">Hello Seller</h1>
             <SigninCard
               image={sellerSigninImage}
-              api="http://localhost:8080/api/v1/auth/login"
+              api="http://localhost:8080/api/v1/auth/seller/login"
               signupLink="/seller/signup"
               redirectHome="/seller/home"
             />

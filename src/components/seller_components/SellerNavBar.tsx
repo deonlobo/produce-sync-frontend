@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import icon from "../../assets/icon1.png";
+import "./css/SellerNavBar.css";
 
 const SellerNavBar = () => {
   return (
     <>
-      <nav className="navbar navbar-expand-sm bg-body-tertiary">
+      <nav className="navbar navbar-expand-sm custom-seller-navbar">
         <div className="container-fluid">
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
@@ -21,7 +22,7 @@ const SellerNavBar = () => {
               </li>
               <li className="nav-item">
                 <Link
-                  className="nav-link active"
+                  className="nav-link text-css-navbar"
                   aria-current="page"
                   to="/seller/home"
                 >
@@ -29,7 +30,10 @@ const SellerNavBar = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link active" to="/seller/newproduct">
+                <Link
+                  className="nav-link text-css-navbar"
+                  to="/seller/newproduct"
+                >
                   New Product
                 </Link>
               </li>
