@@ -1,34 +1,67 @@
-const BuyerHomePage = () => {
-  const handleButtonClick = async () => {
+import BuyerNavBar from "../../components/buyer_components/BuyerNavBar";
+import BuyerProductCard from "../../components/buyer_components/BuyerProductCard";
+import DefaultImage from "../../assets/imageNotAvailable.jpg";
+import "./css/BuyerHomePage.css";
+import { useEffect, useState } from "react";
+
+interface Product {
+  productId: string;
+  productName: string;
+  productDescription: string;
+  productImages: string[];
+  // Add other properties as needed
+}
+
+const BuyerHome = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  const fetchAllProducts = async () => {
     try {
-      // The client-side code cannot directly access the HTTP-only cookie
-      // Instead, the server will automatically send the cookie when making requests
-      const response = await fetch("http://localhost:8080/buyer/hello", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Include cookies in the request
-      });
+      const response = await fetch(
+        "http://localhost:8080/buyer/nearby/seller/products",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
 
       if (response.ok) {
-        const responseData = await response.text();
-        console.log("Response from server:", responseData);
+        const data = await response.json();
+        setProducts(data); // Update the state with the fetched products
+        console.log("Products Loaded successfully");
       } else {
-        console.log("Failed to fetch data from server");
-        // Handle other HTTP response statuses if needed
+        console.error("Failed to fetch products");
       }
     } catch (error) {
-      console.error("Error during GET request:", error);
+      console.error("Error during fetch:", error);
     }
   };
 
+  useEffect(() => {
+    // This function will be called when the component mounts
+    fetchAllProducts();
+  }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+
   return (
     <div>
-      <div>BuyerHomePage</div>
-      <button onClick={handleButtonClick}>Print authToken Cookie</button>
+      <BuyerNavBar />
+      <div className="buyer-home-pg-container">
+        {products.map((product) => (
+          <BuyerProductCard
+            key={product.productId} // Ensure a unique key for each rendered component
+            image={
+              product.productImages && product.productImages.length > 0
+                ? "https://storage.googleapis.com/productsync_product/" +
+                  product.productImages[0]
+                : DefaultImage
+            }
+            productName={product.productName}
+            description={product.productDescription}
+          />
+        ))}
+      </div>
     </div>
   );
 };
 
-export default BuyerHomePage;
+export default BuyerHome;

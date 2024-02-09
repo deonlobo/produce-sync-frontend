@@ -22,7 +22,7 @@ const SellerNavBar = () => {
               </li>
               <li className="nav-item">
                 <Link
-                  className="nav-link text-css-navbar"
+                  className="nav-link text-css-seller-navbar"
                   aria-current="page"
                   to="/seller/home"
                 >
@@ -31,7 +31,7 @@ const SellerNavBar = () => {
               </li>
               <li className="nav-item">
                 <Link
-                  className="nav-link text-css-navbar"
+                  className="nav-link text-css-seller--navbar"
                   to="/seller/newproduct"
                 >
                   New Product

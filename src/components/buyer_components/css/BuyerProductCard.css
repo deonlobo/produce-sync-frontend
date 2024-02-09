@@ -1,0 +1,17 @@
+.buyer-product-card {
+    margin: 3px 3px; /* 10px top and bottom margin to create space between rows */
+}
+
+.fix-prod-card-img-buyer {
+  height: 286px;
+  object-fit: cover;
+}
+
+/* Add this style to your CSS file */
+.fix-prod-card-description-buyer {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Adjust the number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
