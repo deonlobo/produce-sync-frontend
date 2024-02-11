@@ -31,7 +31,7 @@ const SellerNavBar = () => {
               </li>
               <li className="nav-item">
                 <Link
-                  className="nav-link text-css-seller--navbar"
+                  className="nav-link text-css-seller-navbar"
                   to="/seller/newproduct"
                 >
                   New Product
