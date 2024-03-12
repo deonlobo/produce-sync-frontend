@@ -29,6 +29,15 @@ const BuyerNavBar = () => {
                   Home
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link
+                  className="nav-link text-css-buyer-navbar"
+                  aria-current="page"
+                  to="/buyer/cart"
+                >
+                  Cart
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

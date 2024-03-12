@@ -1,0 +1,27 @@
+.cart-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.cart-products-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Add a line between products */
+.cart-products-container .cart-product {
+    border-bottom: 1px solid #ccc;
+}
+
+.cart-border{
+    border-bottom: 1px solid #ccc;
+}
+
+.cart-actions {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+/* Add any additional styling as needed */

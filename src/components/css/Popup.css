@@ -1,0 +1,36 @@
+.popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  
+  .popup-content {
+    background: #fff;
+    padding: 50px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .popup.success .popup-content {
+    border: 2px solid #4caf50; /* Green border for success */
+  }
+  
+  .popup.failure .popup-content {
+    border: 2px solid #f44336; /* Red border for failure */
+  }
+  
+  .popup p {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .popup button {
+    margin-top: 10px;
+  }

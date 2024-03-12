@@ -12,6 +12,7 @@ interface Address {
 }
 
 interface UserDocument {
+  brandName?: string;
   firstName?: string;
   lastName?: string;
   gender?: string;
@@ -43,6 +44,10 @@ const SellerSignupCard = () => {
   };
 
   const validateVal = () => {
+    if (!user.brandName) {
+      setEmptyField("brandName");
+      return;
+    }
     if (!user.firstName) {
       setEmptyField("firstName");
       return;
@@ -135,6 +140,16 @@ const SellerSignupCard = () => {
           <p className="card-text">
             Signup and be a part of our team of authentic sellers
           </p>
+          <InputComponent
+            placeholder={"Brand Name"}
+            value={user.brandName || ""}
+            onSelectItem={handleInputChange}
+            type="text"
+            name={"brandName"}
+            className={`form-control ${
+              emptyField === "brandName" ? "is-invalid" : ""
+            }`}
+          />
           <InputComponent
             placeholder={"First Name"}
             value={user.firstName || ""}

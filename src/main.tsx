@@ -10,6 +10,8 @@ import BuyerSigninPage from "./pages/buyer_pages/BuyerSigninPage";
 import BuyerSignupPage from "./pages/buyer_pages/BuyerSignupPage";
 import BuyerHomePage from "./pages/buyer_pages/BuyerHomePage";
 import SellerAddProductPage from "./pages/seller_pages/SellerAddProductPage";
+import BuyerProductPage from "./pages/buyer_pages/BuyerProductPage";
+import BuyerCartPage from "./pages/buyer_pages/BuyerCartPage";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,10 @@ const router = createBrowserRouter([
     element: <SellerHomePage />,
   },
   {
+    path: "/seller/newproduct",
+    element: <SellerAddProductPage />,
+  },
+  {
     path: "/buyer/signin",
     element: <BuyerSigninPage />,
   },
@@ -41,8 +47,12 @@ const router = createBrowserRouter([
     element: <BuyerHomePage />,
   },
   {
-    path: "/seller/newproduct",
-    element: <SellerAddProductPage />,
+    path: "/buyer/product/:productId", // Use a colon to indicate a dynamic parameter
+    element: <BuyerProductPage />,
+  },
+  {
+    path: "/buyer/cart",
+    element: <BuyerCartPage />,
   },
 ]);
 

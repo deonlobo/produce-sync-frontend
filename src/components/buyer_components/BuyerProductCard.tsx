@@ -1,12 +1,23 @@
 import "./css/BuyerProductCard.css";
+import { Link } from "react-router-dom";
 
 interface prop {
+  productId: string;
   image: string;
+  brandName: string;
   productName: string;
   description: string;
+  perUnitPrice: number;
 }
 
-const BuyerProductCard = ({ image, productName, description }: prop) => {
+const BuyerProductCard = ({
+  productId,
+  image,
+  brandName,
+  productName,
+  description,
+  perUnitPrice,
+}: prop) => {
   return (
     <div className="card buyer-product-card" style={{ width: "18rem" }}>
       <img
@@ -16,14 +27,19 @@ const BuyerProductCard = ({ image, productName, description }: prop) => {
       />
       <div className="card-body">
         <h5 className="card-title">{productName}</h5>
-        <p className="card-text fix-prod-card-description-buyer">
+        <p className="card-text mb-prod small">
+          <em>Seller: {brandName}</em>
+        </p>
+        <p className="card-text fix-prod-card-description-buyer mb-prod">
           {description}
         </p>
+        <p className="card-text">Price: ${perUnitPrice.toFixed(2)}</p>
       </div>
       <div className="my-2 text-center">
-        <a href="#" className="btn btn-primary">
+        {/* Use Link to navigate to the product details page */}
+        <Link to={`/buyer/product/${productId}`} className="btn btn-primary">
           See Details
-        </a>
+        </Link>
       </div>
     </div>
   );
