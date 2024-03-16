@@ -2,6 +2,8 @@ import { ChangeEvent, useState } from "react";
 import InputComponent from "../InputComponent";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import Popup from "../../components/Popup";
+import LoadingSpinner from "../LoadingSpinner";
 
 interface Address {
   addressLine1?: string;
@@ -17,13 +19,19 @@ interface UserDocument {
   gender?: string;
   address?: Address;
   username?: string;
-  password?: string;
 }
 
-const SellerSignupCard = () => {
+const BuyerSignupCard = () => {
   const [user, setUser] = useState<UserDocument>({});
   const [emptyField, setEmptyField] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [popupConfig, setPopupConfig] = useState<{
+    message: string;
+    type: "success" | "failure";
+    action: () => void;
+    buttonName: string;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading state
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -79,17 +87,14 @@ const SellerSignupCard = () => {
       setEmptyField("username");
       return;
     }
-    if (!user.password) {
-      setEmptyField("password");
-      return;
-    }
   };
   const handleSignUp = async () => {
     try {
       validateVal();
 
+      setIsLoading(true);
       const response = await fetch(
-        "http://localhost:8080/api/v1/auth/buyer/create",
+        "http://localhost:9090/api/v1/auth/buyer/create",
         {
           method: "POST", // Change the method to POST
           headers: {
@@ -98,28 +103,40 @@ const SellerSignupCard = () => {
           body: JSON.stringify(user, null, 2),
         }
       );
+      setIsLoading(false);
 
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text();
 
         // Store the authentication token in a secure cookie
-        Cookies.set("authToken", data.token, {
-          secure: true,
-          httpOnly: false,
-          sameSite: "none",
-          path: "/",
-        });
-        console.log("Success authentication of the user");
+        // Cookies.set("authToken", data.token, {
+        //   secure: true,
+        //   httpOnly: false,
+        //   sameSite: "none",
+        //   path: "/",
+        // });
+        console.log("Token sent successfully" + data);
         // Redirect or update state based on successful authentication
         // Log the value of the authToken cookie
-        const authTokenValue = Cookies.get("authToken");
-        console.log("Value of authToken cookie:", authTokenValue);
-        navigate("/buyer/home");
+        // const authTokenValue = Cookies.get("authToken");
+        // console.log("Value of authToken cookie:", authTokenValue);
+        navigate("/user/success");
+      } else if (response.status === 409) {
+        const data = await response.text();
+        setPopupConfig({
+          message: data,
+          type: "failure",
+          action: directLoginPage,
+          buttonName: "Login",
+        });
       } else {
-        console.log(
-          "Failed authentication of the user" + JSON.stringify(user, null, 2)
-        );
-        // Handle authentication failure
+        const data = await response.text();
+        setPopupConfig({
+          message: data,
+          type: "failure",
+          action: closePopup,
+          buttonName: "Close",
+        });
       }
     } catch (error) {
       // Handle network or other errors
@@ -127,9 +144,21 @@ const SellerSignupCard = () => {
     }
   };
 
+  // Close the popup
+  const closePopup = () => {
+    setPopupConfig(null);
+  };
+
+  // direct the user to the login page
+  const directLoginPage = () => {
+    navigate("/buyer/signin");
+  };
+
   return (
     <>
       <div className="card text-center mb-3">
+        {/* Show loading spinner if isLoading is true */}
+        {isLoading && <LoadingSpinner />}
         <div className="card-body" style={{ margin: "0% 5% 0% 5%" }}>
           <h5 className="card-title">Signup as a Seller</h5>
           <p className="card-text">
@@ -224,23 +253,13 @@ const SellerSignupCard = () => {
             }`}
           />
           <InputComponent
-            placeholder={"User Name"}
+            placeholder={"Email"}
             value={user.username || ""}
             onSelectItem={handleInputChange}
             type="text"
             name={"username"}
             className={`form-control ${
               emptyField === "username" ? "is-invalid" : ""
-            }`}
-          />
-          <InputComponent
-            placeholder={"Password"}
-            value={user.password || ""}
-            onSelectItem={handleInputChange}
-            type="password"
-            name={"password"}
-            className={`form-control ${
-              emptyField === "password" ? "is-invalid" : ""
             }`}
           />
           <button
@@ -251,9 +270,18 @@ const SellerSignupCard = () => {
             Signup
           </button>
         </div>
+        {/* Render the SuccessPopup component if popupConfig is not null */}
+        {popupConfig && (
+          <Popup
+            onClose={popupConfig.action}
+            message={popupConfig.message}
+            type={popupConfig.type}
+            primaryButtonName={popupConfig.buttonName}
+          />
+        )}
       </div>
     </>
   );
 };
 
-export default SellerSignupCard;
+export default BuyerSignupCard;

@@ -1,8 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon1.png";
 import "./css/SellerNavBar.css";
+import Cookies from "js-cookie";
 
 const SellerNavBar = () => {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    Cookies.remove("authToken"); // Remove the "authToken" cookie
+    navigate("/seller/signin");
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-sm custom-seller-navbar">
@@ -37,7 +45,37 @@ const SellerNavBar = () => {
                   New Product
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link
+                  className="nav-link text-css-seller-navbar"
+                  to="/seller/confirmed"
+                >
+                  Confirmed Orders
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link
+                  className="nav-link text-css-seller-navbar"
+                  to="/seller/delivered"
+                >
+                  Fulfilled Orders
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link
+                  className="nav-link text-css-buyer-navbar"
+                  aria-current="page"
+                  to="/seller/profile"
+                >
+                  Profile
+                </Link>
+              </li>
             </ul>
+          </div>
+          <div className="navbar-nav ml-auto">
+            <button className="btn btn-secondary" onClick={logout}>
+              Logout
+            </button>
           </div>
         </div>
       </nav>

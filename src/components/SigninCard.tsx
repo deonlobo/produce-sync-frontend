@@ -1,28 +1,76 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Cookies from "universal-cookie";
+import Cookies from "js-cookie";
+import Popup from "./Popup";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface prop {
   image: string;
   api: string;
+  authApi: string;
   signupLink: string;
   redirectHome: string;
 }
 
-const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
+const SigninCard = ({
+  image,
+  api,
+  authApi,
+  signupLink,
+  redirectHome,
+}: prop) => {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [emptyField, setEmptyField] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [popupConfig, setPopupConfig] = useState<{
+    message: string;
+    type: "success" | "failure";
+    buttonName: string;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading state
 
   const validateVal = () => {
     if (!username) {
       setEmptyField("username");
       return;
     }
-    if (!password) {
-      setEmptyField("password");
-      return;
+  };
+
+  //call the signin function from the backend and save the user token in the Cookies
+  const authenticateToken = async () => {
+    const authToken = Cookies.get("authToken");
+    if (!authToken) {
+      console.log("Token does not exist");
+      // If token is not valid then call handleSignIn
+      handleSignIn();
+    } else {
+      try {
+        validateVal();
+
+        const authToken = Cookies.get("authToken");
+        const response = await fetch(authApi, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain", // Assuming the body is a string
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: username,
+        });
+
+        if (response.ok) {
+          const data = await response.text();
+          console.log("Success authentication of the user");
+
+          navigate(redirectHome);
+        } else {
+          console.log("Token is not valid " + username);
+          // If token is not valid then call handleSignIn
+          handleSignIn();
+        }
+      } catch (error) {
+        // Handle network or other errors
+        console.error("Error during authentication:", error);
+      }
     }
   };
 
@@ -30,6 +78,7 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
   const handleSignIn = async () => {
     try {
       validateVal();
+      setIsLoading(true);
       const response = await fetch(api, {
         method: "POST", // Change the method to POST
         headers: {
@@ -37,31 +86,22 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
         },
         body: JSON.stringify({
           username,
-          password,
         }),
       });
-
+      setIsLoading(false);
       if (response.ok) {
-        const data = await response.json();
-        console.log("data" + data.token);
-        // Store the authentication token using universal-cookie
-        const cookies = new Cookies();
-        cookies.set("authToken", data.token, {
-          secure: true,
-          httpOnly: false,
-          sameSite: "none",
-          path: "/",
-        });
-        console.log("Success authentication of the user");
-
-        // Redirect or update state based on successful authentication
-        const authTokenValue = cookies.get("authToken");
-        console.log("Value of authToken cookie:", authTokenValue);
-
-        navigate(redirectHome);
-      } else {
-        console.log("Failed authentication of the user" + username + password);
+        //Email is sent successfully
+        const data = await response.text();
+        navigate("/user/success");
+      } else if (response.status === 409) {
+        console.log("Failed authentication of the user" + username);
         // Handle authentication failure
+        const data = await response.text();
+        setPopupConfig({
+          message: data,
+          type: "failure",
+          buttonName: "Close",
+        });
       }
     } catch (error) {
       // Handle network or other errors
@@ -69,9 +109,16 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
     }
   };
 
+  // Close the popup
+  const closePopup = () => {
+    setPopupConfig(null);
+  };
+
   return (
     <>
       <div className="card mb-3" style={{ maxWidth: "50%" }}>
+        {/* Show loading spinner if isLoading is true */}
+        {isLoading && <LoadingSpinner />}
         <div className="row g-0">
           <div className="col-md-4">
             <img
@@ -83,7 +130,7 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
           <div className="col-md-8">
             <div className="card-body">
               <h5 className="card-title">Signin</h5>
-              <div className="input-group mb-3">
+              <div className="input-group mb-3 mt-3">
                 <input
                   type="text"
                   className={`form-control ${
@@ -95,26 +142,14 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
-              <div className="input-group mb-3">
-                <input
-                  type="password"
-                  className={`form-control ${
-                    emptyField === "password" ? "is-invalid" : ""
-                  }`}
-                  placeholder="Password"
-                  aria-label="Password"
-                  aria-describedby="basic-addon1"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => handleSignIn()}
+                onClick={() => authenticateToken()}
               >
                 Signin
               </button>
-              <p className="card-text" style={{ marginTop: "1em" }}>
+              <p className="card-text" style={{ marginTop: "3em" }}>
                 <small className="text-body-secondary">
                   Dont have an account, you can{" "}
                   <Link to={signupLink}>signup here</Link>
@@ -123,6 +158,15 @@ const SigninCard = ({ image, api, signupLink, redirectHome }: prop) => {
             </div>
           </div>
         </div>
+        {/* Render the SuccessPopup component if popupConfig is not null */}
+        {popupConfig && (
+          <Popup
+            onClose={closePopup}
+            message={popupConfig.message}
+            type={popupConfig.type}
+            primaryButtonName={popupConfig.buttonName}
+          />
+        )}
       </div>
     </>
   );

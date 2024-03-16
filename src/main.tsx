@@ -12,6 +12,14 @@ import BuyerHomePage from "./pages/buyer_pages/BuyerHomePage";
 import SellerAddProductPage from "./pages/seller_pages/SellerAddProductPage";
 import BuyerProductPage from "./pages/buyer_pages/BuyerProductPage";
 import BuyerCartPage from "./pages/buyer_pages/BuyerCartPage";
+import SuccessfulSigninUp from "./pages/SuccessfulSigninUp";
+import SellerProductPage from "./pages/seller_pages/SellerProductPage";
+import SellerUpdateProductCard from "./components/seller_components/SellerUpdateProductCard";
+import SellerUpdateProductPage from "./pages/seller_pages/SellerUpdateProductPage";
+import SellerOrderDelivered from "./pages/seller_pages/SellerOrderDelivered";
+import SellerOrderConfirmed from "./pages/seller_pages/SellerOrderConfirmed";
+import BuyerProfilePage from "./pages/buyer_pages/BuyerProfilePage";
+import SellerProfilePage from "./pages/seller_pages/SellerProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -27,12 +35,36 @@ const router = createBrowserRouter([
     element: <SellerSignupPage />,
   },
   {
-    path: "/seller/home",
+    path: "/user/success",
+    element: <SuccessfulSigninUp />,
+  },
+  {
+    path: "/seller/home/:authToken?",
     element: <SellerHomePage />,
   },
   {
     path: "/seller/newproduct",
     element: <SellerAddProductPage />,
+  },
+  {
+    path: "/seller/product/:productId?",
+    element: <SellerProductPage />,
+  },
+  {
+    path: "/seller/update/:productId?",
+    element: <SellerUpdateProductPage />,
+  },
+  {
+    path: "/seller/confirmed",
+    element: <SellerOrderConfirmed />,
+  },
+  {
+    path: "/seller/delivered",
+    element: <SellerOrderDelivered />,
+  },
+  {
+    path: "/seller/profile",
+    element: <SellerProfilePage />,
   },
   {
     path: "/buyer/signin",
@@ -43,7 +75,7 @@ const router = createBrowserRouter([
     element: <BuyerSignupPage />,
   },
   {
-    path: "/buyer/home",
+    path: "/buyer/home/:authToken?",
     element: <BuyerHomePage />,
   },
   {
@@ -53,6 +85,10 @@ const router = createBrowserRouter([
   {
     path: "/buyer/cart",
     element: <BuyerCartPage />,
+  },
+  {
+    path: "/buyer/profile",
+    element: <BuyerProfilePage />,
   },
 ]);
 

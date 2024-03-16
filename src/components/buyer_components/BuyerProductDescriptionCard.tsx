@@ -1,6 +1,8 @@
 import { ChangeEvent, useState } from "react";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs"; // Import Bootstrap icons
 import Popup from "../Popup";
+import Cookies from "js-cookie";
+import Address from "../AddressInterface";
 
 interface Product {
   productId: string;
@@ -17,6 +19,7 @@ interface Product {
 
 interface prop {
   product: Product;
+  sellerAddress?: Address;
 }
 
 interface OrderProduct {
@@ -24,14 +27,28 @@ interface OrderProduct {
   quantity?: number;
 }
 
-const BuyerProductDescriptionCard = ({ product }: prop) => {
+const BuyerProductDescriptionCard = ({ product, sellerAddress }: prop) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [orderProduct, setOrderProduct] = useState<OrderProduct>({});
   const [emptyField, setEmptyField] = useState<string | null>(null);
   const [popupConfig, setPopupConfig] = useState<{
     message: string;
     type: "success" | "failure";
+    secondaryButtonName?: string;
   } | null>(null);
+  const addressLines = [];
+  if (sellerAddress?.addressLine1)
+    addressLines.push(sellerAddress.addressLine1);
+  addressLines.push(
+    `${sellerAddress?.city ? `${sellerAddress.city}` : ""}${
+      sellerAddress?.province ? `, ${sellerAddress.province} ` : ""
+    }`
+  );
+  addressLines.push(
+    `${sellerAddress?.country ? `${sellerAddress.country} ` : ""}${
+      sellerAddress?.postalCode ? `- ${sellerAddress.postalCode}` : ""
+    }`
+  );
 
   const handlePreviousImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
@@ -55,6 +72,51 @@ const BuyerProductDescriptionCard = ({ product }: prop) => {
     if (!orderProduct.quantity) {
       setEmptyField("quantity");
       return;
+    }
+  };
+
+  const checkCartValid = async () => {
+    try {
+      const authToken = Cookies.get("authToken");
+      const response = await fetch(
+        "http://localhost:8080/buyer/cart/product/valid",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`, // Assuming authToken is accessible here
+          },
+          body: JSON.stringify(orderProduct),
+        }
+      );
+
+      if (response.ok) {
+        const isValid = await response.json();
+        if (isValid) {
+          addToCartHandler();
+        } else {
+          // Handle case when product is not valid
+          setPopupConfig({
+            message:
+              "Products in the Cart are of different seller. Are you sure you want to replace the products?",
+            type: "failure",
+            secondaryButtonName: "Add",
+          });
+        }
+      } else {
+        // Handle other response status codes
+        setPopupConfig({
+          message: "Failed to validate product",
+          type: "failure",
+        });
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error("Error validating product:", error);
+      setPopupConfig({
+        message: "Error validating product",
+        type: "failure",
+      });
     }
   };
 
@@ -136,16 +198,26 @@ const BuyerProductDescriptionCard = ({ product }: prop) => {
         </div>
         <div className="col-md-7">
           <div className="card-body">
-            <h5 className="card-title">{product.productName}</h5>
-            <p className="card-text">{product.productDescription}</p>
-            <p className="card-text">Brand: {product.brandName}</p>
-            <p className="card-text">
+            <h5 className="card-title mb-3">{product.productName}</h5>
+            <p className="card-text mb-1">{product.productDescription}</p>
+            <p className="card-text mb-1">
               Available Quantity: {product.availableQuantity}
             </p>
             <p className="card-text">
-              Price: {product.perUnitPrice} per {product.unit}
+              <h6>
+                Price: {product.perUnitPrice} per {product.unit}
+              </h6>
             </p>
-            <div className="input-group mb-3">
+            <p className="card-text">Brand: {product.brandName}</p>
+            <div>
+              <h6>Address:</h6>
+              {addressLines.map((line, index) => (
+                <p key={index} style={{ marginBottom: "0px" }}>
+                  {line}
+                </p>
+              ))}
+            </div>
+            <div className="input-group mt-3 mb-3">
               <input
                 type="number"
                 className={`form-control ${
@@ -161,7 +233,7 @@ const BuyerProductDescriptionCard = ({ product }: prop) => {
             </div>
             <button
               className="btn btn-primary"
-              onClick={() => addToCartHandler()}
+              onClick={() => checkCartValid()}
             >
               Add to Cart
             </button>
@@ -172,8 +244,10 @@ const BuyerProductDescriptionCard = ({ product }: prop) => {
       {popupConfig && (
         <Popup
           onClose={closePopup}
+          onSecondaryAction={addToCartHandler}
           message={popupConfig.message}
           type={popupConfig.type}
+          secondaryButtonName={popupConfig.secondaryButtonName}
         />
       )}
     </div>

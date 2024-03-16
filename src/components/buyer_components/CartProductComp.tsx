@@ -1,14 +1,5 @@
-interface ProductInterface {
-  productId: string;
-  sellerId: string;
-  productName: string;
-  productDescription: string;
-  productImages: string[];
-  quantity: number;
-  perUnitPrice: number;
-  unit: string;
-  total: number;
-}
+import ProductInterface from "../ProductInterface";
+
 interface prop {
   product: ProductInterface;
   brandName: String;

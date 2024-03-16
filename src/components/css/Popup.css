@@ -16,6 +16,7 @@
     padding: 50px;
     border-radius: 5px;
     text-align: center;
+    width: 27%; 
   }
   
   .popup.success .popup-content {

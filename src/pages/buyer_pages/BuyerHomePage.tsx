@@ -3,6 +3,9 @@ import BuyerProductCard from "../../components/buyer_components/BuyerProductCard
 import DefaultImage from "../../assets/imageNotAvailable.jpg";
 import "./css/BuyerHomePage.css";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Cookies from "js-cookie";
+import Popup from "../../components/Popup";
 
 interface Product {
   productId: string;
@@ -17,6 +20,13 @@ interface Product {
 const BuyerHome = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const { authToken } = useParams(); // Use useParams to get dynamic parameters from the URL
+  const navigate = useNavigate();
+  const [popupConfig, setPopupConfig] = useState<{
+    message: string;
+    type: "success" | "failure";
+    buttonName: string;
+  } | null>(null);
 
   const fetchProducts = async (search = "") => {
     try {
@@ -34,6 +44,11 @@ const BuyerHome = () => {
         console.log("Products Loaded successfully");
       } else {
         console.error("Failed to fetch products");
+        setPopupConfig({
+          message: "Authentication failed please login",
+          type: "failure",
+          buttonName: "Login",
+        });
       }
     } catch (error) {
       console.error("Error during fetch:", error);
@@ -45,9 +60,24 @@ const BuyerHome = () => {
   };
 
   useEffect(() => {
+    if (authToken) {
+      // Set the authToken in the Cookies
+      Cookies.set("authToken", authToken, {
+        expires: 10, // Expires in 10 days
+        secure: true,
+        httpOnly: false,
+        sameSite: "none",
+        path: "/",
+      });
+    }
     // This function will be called when the component mounts
     fetchProducts();
   }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+
+  // Close the popup
+  const closePopup = () => {
+    navigate("/buyer/signin");
+  };
 
   return (
     <div>
@@ -92,6 +122,15 @@ const BuyerHome = () => {
           />
         ))}
       </div>
+      {/* Render the SuccessPopup component if popupConfig is not null */}
+      {popupConfig && (
+        <Popup
+          onClose={closePopup}
+          message={popupConfig.message}
+          type={popupConfig.type}
+          primaryButtonName={popupConfig.buttonName}
+        />
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 .buyer-home-pg-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Align items in the center horizontally */
+    
     margin-left: 1.5em;
     margin-right:1.5em;
     margin-top: 1.5em;

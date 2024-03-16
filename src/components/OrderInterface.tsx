@@ -1,18 +1,10 @@
-interface Product {
-  productId: string;
-  sellerId: string;
-  productName: string;
-  productDescription: string;
-  productImages: string[];
-  quantity: number;
-  perUnitPrice: number;
-  unit: string;
-  total: number;
-}
+import Address from "./AddressInterface";
+import Product from "./ProductInterface";
 
 interface Order {
   orderId: string;
   buyerId: string;
+  buyerName: string;
   sellerId: string;
   brandName: string;
   productList: Product[];
@@ -20,6 +12,7 @@ interface Order {
   status: string;
   createdTs: number;
   updatedTs: number;
+  address: Address;
 }
 
 export default Order;

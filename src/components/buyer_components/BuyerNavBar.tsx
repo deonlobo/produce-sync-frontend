@@ -1,8 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon1.png";
 import "./css/BuyerNavBar.css";
+import Cookies from "js-cookie";
 
 const BuyerNavBar = () => {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    Cookies.remove("authToken"); // Remove the "authToken" cookie
+    navigate("/buyer/signin");
+  };
   return (
     <>
       <nav className="navbar navbar-expand-sm custom-buyer-navbar">
@@ -38,7 +45,21 @@ const BuyerNavBar = () => {
                   Cart
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link
+                  className="nav-link text-css-buyer-navbar"
+                  aria-current="page"
+                  to="/buyer/profile"
+                >
+                  Profile
+                </Link>
+              </li>
             </ul>
+          </div>
+          <div className="navbar-nav ml-auto">
+            <button className="btn btn-secondary" onClick={logout}>
+              Logout
+            </button>
           </div>
         </div>
       </nav>

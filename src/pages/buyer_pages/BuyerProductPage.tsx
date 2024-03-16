@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom"; // Import useParams hook
 import BuyerNavBar from "../../components/buyer_components/BuyerNavBar";
 import BuyerProductDescriptionCard from "../../components/buyer_components/BuyerProductDescriptionCard";
+import Address from "../../components/AddressInterface";
+import Cookies from "js-cookie";
 
 interface Product {
   productId: string;
@@ -19,6 +21,7 @@ interface Product {
 const BuyerProductPage = () => {
   const [product, setProduct] = useState<Product>();
   const { productId } = useParams(); // Use useParams to get dynamic parameters from the URL
+  const [sellerAddress, setSellerAddress] = useState<Address>(); // State to store seller address
 
   const fetchProductDetails = async () => {
     try {
@@ -34,6 +37,25 @@ const BuyerProductPage = () => {
         const data = await response.json();
         setProduct(data); // Update the state with the fetched products
         console.log("Product Loaded successfully");
+
+        // Call the API to fetch seller address
+        const authToken = Cookies.get("authToken");
+        const addressResponse = await fetch(
+          `http://localhost:8080/buyer/product/seller/address?sellerId=${data.sellerId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${authToken}`, // Assuming authToken is accessible here
+            },
+          }
+        );
+        if (addressResponse.ok) {
+          const addressData = await addressResponse.json();
+          setSellerAddress(addressData); // Set the seller address state
+          console.log("Seller Address Loaded successfully");
+        } else {
+          console.error("Failed to fetch seller address");
+        }
       } else {
         console.error("Failed to fetch product");
       }
@@ -53,7 +75,10 @@ const BuyerProductPage = () => {
       <BuyerNavBar />
       <div style={{ marginTop: "2em", marginLeft: "2em", marginRight: "2em" }}>
         {product !== undefined ? (
-          <BuyerProductDescriptionCard product={product} />
+          <BuyerProductDescriptionCard
+            product={product}
+            sellerAddress={sellerAddress}
+          />
         ) : (
           <p>Loading...</p>
         )}
