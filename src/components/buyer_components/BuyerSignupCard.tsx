@@ -1,6 +1,5 @@
 import { ChangeEvent, useState } from "react";
 import InputComponent from "../InputComponent";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import Popup from "../../components/Popup";
 import LoadingSpinner from "../LoadingSpinner";
