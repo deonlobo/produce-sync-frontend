@@ -81,12 +81,48 @@ const SellerAddProductCard = () => {
         console.log(data);
         setProduct((prevProd) => ({ ...prevProd, productImages: data }));
         console.log("Successfully added the Image");
+
+        predictImagePrice();
       } else {
         console.log("Failed to upload Image");
         // Handle failure
       }
     } catch (error) {
       console.error("Error during uploading image : ", error);
+    }
+  };
+
+  const predictImagePrice = async () => {
+    // Predict if the image is of tomato
+    if (
+      product.productName &&
+      product.productName.toLowerCase().includes("tomato")
+    ) {
+      const formDataPredict = new FormData();
+      formDataPredict.append("image", files[0]);
+
+      try {
+        const predictionRes = await fetch("http://127.0.0.1:5000/predict", {
+          method: "POST",
+          body: formDataPredict,
+        });
+
+        if (predictionRes.ok) {
+          const predictionData = await predictionRes.json();
+          console.log("Successfully Predicted", predictionData);
+
+          // Assuming predictionData is a JSON object with keys "price_segmentation" and "unit"
+          setProduct((prevProd) => ({
+            ...prevProd,
+            perUnitPrice: predictionData.price_segmentation,
+            unit: predictionData.unit,
+          }));
+        } else {
+          console.error("Prediction failed:", predictionRes.statusText);
+        }
+      } catch (error) {
+        console.error("Error occurred during prediction:", error);
+      }
     }
   };
 
