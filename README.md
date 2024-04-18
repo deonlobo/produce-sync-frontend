@@ -1,7 +1,7 @@
 Passwordless Authentication : https://github.com/deonlobo/produce-sync-auth
 React Frontend : https://github.com/deonlobo/produce-sync-frontend
 SprintBoot Backend : https://github.com/deonlobo/produce-sync-be
-Price Segmentation :
+Price Segmentation : https://github.com/deonlobo/produce-sync-predict
 
 # React + TypeScript + Vite
 
